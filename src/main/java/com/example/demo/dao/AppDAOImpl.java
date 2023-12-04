@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.entity.Course;
 import com.example.demo.entity.Instructor;
 import com.example.demo.entity.InstructorDetail;
 
@@ -107,6 +108,23 @@ public class AppDAOImpl implements AppDAO {
     public void deleteCourseById(int id) {
         Course course = entityManager.find(Course.class, id);
         entityManager.remove(course);
+    }
+
+    @Override
+    @Transactional
+    public void save(Course course) {
+        entityManager.persist(course);
+    }
+
+    @Override
+    public Course findCourseAndReviewsByCourseId(int id) {
+        TypedQuery<Course> query = entityManager.createQuery("select c from Course c "
+                + "JOIN FETCH c.reviews "
+                + " where c.id=:data", Course.class);
+
+        query.setParameter("data", id);
+        Course course = query.getSingleResult();
+        return course;
     }
 
 }

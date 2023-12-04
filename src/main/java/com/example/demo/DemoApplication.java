@@ -7,9 +7,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import com.example.demo.dao.AppDAO;
-import com.example.demo.dao.Course;
+import com.example.demo.entity.Course;
 import com.example.demo.entity.Instructor;
 import com.example.demo.entity.InstructorDetail;
+import com.example.demo.entity.Review;
+
 import java.util.List;
 
 @SpringBootApplication
@@ -34,7 +36,7 @@ public class DemoApplication {
 			// findInstructorDetailById(appDAO);
 			// deleteInstructorDetailById(appDAO);
 
-			// many-to-one/one-to-many mapping
+			// one-to-many mapping-bi-directional
 			// createInstructorWithCourses(appDAO);
 			// findInstructorWithCourses(appDAO);
 			// findCoursesForInstructor(appDAO);
@@ -42,10 +44,40 @@ public class DemoApplication {
 			// updateInstructor(appDAO);
 			// updateCourse(appDAO);
 			// deleteInstructor(appDAO);
-			deleteCourseById(appDAO);
+			// deleteCourseById(appDAO);
+
+			// one-to-many mapping-uni-directional
+			// createCourseAndReviews(appDAO);
+			// retrieveCourseAndReviews(appDAO);
+			deleteCourseAndReviews(appDAO);
 
 			System.out.println("=> Done.");
 		};
+	}
+
+	private void deleteCourseAndReviews(AppDAO appDAO) {
+		int id = 10;
+		System.out.println("deleting course with id: " + id);
+		appDAO.deleteCourseById(id);
+		System.out.println("=> successfully deleted course(and reviews) with id " + id);
+	}
+
+	private void retrieveCourseAndReviews(AppDAO appDAO) {
+		int id = 10;
+		Course course = appDAO.findCourseAndReviewsByCourseId(id);
+		System.out.println("=> course: " + course);
+		System.out.println("=> course's reviews: " + course.getReviews());
+	}
+
+	private void createCourseAndReviews(AppDAO appDAO) {
+		Course course = new Course("Economics");
+		course.add(new Review("Great course, loved it."));
+		course.add(new Review("Amazing course, learned a lot."));
+		course.add(new Review("Not good course for beginners."));
+		System.out.println("=> saving the course");
+		System.out.println("=> course: " + course);
+		System.out.println("=> course's reviews: " + course.getReviews());
+		appDAO.save(course);
 	}
 
 	private void deleteCourseById(AppDAO appDAO) {
